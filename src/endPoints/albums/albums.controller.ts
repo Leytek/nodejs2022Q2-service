@@ -94,8 +94,8 @@ export class AlbumsController {
     id: string,
   ) {
     const album = await this.albumsService.remove(id);
-    //this.favoritesService.removeAlbum(id);
-    //this.tracksService.removeAlbum(id);
+    await this.favoritesService.remove('album', id);
+    await this.tracksService.removeAlbum(id);
 
     if (!album) {
       throw new NotFoundException(MESSAGES.albumNotFound);

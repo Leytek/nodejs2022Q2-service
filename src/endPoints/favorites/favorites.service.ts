@@ -14,15 +14,15 @@ export class FavoritesService {
   async getAll(): Promise<Favorite> {
     const recordAlbums = (await dataBase.getRecord('albumFav', '0')) as {
       id: string;
-      set: [];
+      set: Set<string>;
     };
     const recordArtists = (await dataBase.getRecord('artistFav', '0')) as {
       id: string;
-      set: [];
+      set: Set<string>;
     };
     const recordTracks = (await dataBase.getRecord('trackFav', '0')) as {
       id: string;
-      set: [];
+      set: Set<string>;
     };
     const favoriteAlbums = Array.from(recordAlbums.set);
     const favoriteArtists = Array.from(recordArtists.set);
@@ -30,27 +30,30 @@ export class FavoritesService {
 
     const albums = (
       await Promise.allSettled(
-        favoriteAlbums.map((id: string) => dataBase.getRecord('albums', id)),
+        favoriteAlbums.map((id: string) => dataBase.getRecord('album', id)),
       )
-    ).map((item: PromiseSettledResult<any>) =>
-      item.status === 'fulfilled' ? item.value : null,
-    );
+    ).reduce((acc, item: PromiseSettledResult<any>) => {
+      item.status === 'fulfilled' && item.value && acc.push(item.value);
+      return acc;
+    }, []);
 
     const artists = (
       await Promise.allSettled(
-        favoriteArtists.map((id: string) => dataBase.getRecord('artists', id)),
+        favoriteArtists.map((id: string) => dataBase.getRecord('artist', id)),
       )
-    ).map((item: PromiseSettledResult<any>) =>
-      item.status === 'fulfilled' ? item.value : null,
-    );
+    ).reduce((acc, item: PromiseSettledResult<any>) => {
+      item.status === 'fulfilled' && item.value && acc.push(item.value);
+      return acc;
+    }, []);
 
     const tracks = (
       await Promise.allSettled(
-        favoriteTracks.map((id: string) => dataBase.getRecord('tracks', id)),
+        favoriteTracks.map((id: string) => dataBase.getRecord('track', id)),
       )
-    ).map((item: PromiseSettledResult<any>) =>
-      item.status === 'fulfilled' ? item.value : null,
-    );
+    ).reduce((acc, item: PromiseSettledResult<any>) => {
+      item.status === 'fulfilled' && item.value && acc.push(item.value);
+      return acc;
+    }, []);
 
     return {
       albums,

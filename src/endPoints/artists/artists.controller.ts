@@ -96,9 +96,9 @@ export class ArtistsController {
     id: string,
   ) {
     const artist = await this.artistsService.remove(id);
-    this.albumsService.removeArtist(id);
-    //this.favoritesService.removeArtist(id);
-    //this.tracksService.removeArtist(id);
+    await this.albumsService.removeArtist(id);
+    await this.favoritesService.remove('artist', id);
+    await this.tracksService.removeArtist(id);
 
     if (!artist) {
       throw new NotFoundException(MESSAGES.artistNotFound);
