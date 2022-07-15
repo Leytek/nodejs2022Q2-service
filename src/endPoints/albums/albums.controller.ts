@@ -73,8 +73,6 @@ export class AlbumsController {
     id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    console.log(updateAlbumDto);
-
     const updatedAlbum = await this.albumsService.update(id, updateAlbumDto);
 
     if (!updatedAlbum) {

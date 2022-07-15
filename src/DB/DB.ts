@@ -19,8 +19,8 @@ class DB {
   }
 
   async getAll(tableName: string) {
-    return Array.from(this.data.get(tableName).entries(), ([key, value]) =>
-      Object.assign({ key }, value),
+    return Array.from(this.data.get(tableName).entries(), ([id, value]) =>
+      Object.assign({ id }, value),
     ) as unknown[];
   }
 

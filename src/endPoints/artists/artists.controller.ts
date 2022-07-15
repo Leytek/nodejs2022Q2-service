@@ -75,8 +75,6 @@ export class ArtistsController {
     id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    console.log(updateArtistDto);
-
     const updatedArtist = await this.artistsService.update(id, updateArtistDto);
 
     if (!updatedArtist) {
