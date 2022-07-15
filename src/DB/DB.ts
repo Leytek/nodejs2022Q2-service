@@ -11,29 +11,29 @@ class DB {
 
   async createRecord(tableName: string, id: string, record: unknown) {
     const table = this.data.get(tableName);
-    if (table.has(id)) {
+    if (!table.has(id)) {
       table.set(id, record);
-      return record;
+      return Object.assign({ id }, record);
     }
     return null;
   }
 
   async getAll(tableName: string) {
-    return Array.from(this.data.get(tableName).values());
+    return Array.from(this.data.get(tableName).entries(), ([key, value]) =>
+      Object.assign({ key }, value),
+    ) as unknown;
   }
 
   async getRecord(tableName: string, id: string) {
     const table = this.data.get(tableName);
-    if (table.has(id)) return table.get(id);
+    if (table.has(id)) return Object.assign({ id }, table.get(id));
     return null;
   }
 
   async updateRecord(tableName: string, id: string, record: unknown) {
     const table = this.data.get(tableName);
-    if (table.has(id)) {
-      table.set(id, record);
-      return record;
-    }
+    if (table.has(id))
+      return Object.assign({ id }, table.set(id, record).get(id));
     return null;
   }
 
