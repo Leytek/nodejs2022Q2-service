@@ -1,27 +1,47 @@
-export default class DB {
+class DB {
   private data: Map<string, Map<string, unknown>>;
 
   constructor() {
     this.data = new Map();
   }
 
-  createTable(name: string): void {
+  async createTable(name: string) {
     this.data.set(name, new Map());
   }
 
-  createRecord(table: string, id: string, record: unknown): void {
-    this.data.get(table).set(id, record);
+  async createRecord(tableName: string, id: string, record: unknown) {
+    const table = this.data.get(tableName);
+    if (table.has(id)) {
+      table.set(id, record);
+      return record;
+    }
+    return null;
   }
 
-  getRecord(table: string, id: string): unknown {
-    return this.data.get(table).get(id);
+  async getAll(tableName: string) {
+    return Array.from(this.data.get(tableName).values());
   }
 
-  updateRecord(table: string, id: string, record: unknown): void {
-    this.data.get(table).set(id, record);
+  async getRecord(tableName: string, id: string) {
+    const table = this.data.get(tableName);
+    if (table.has(id)) return table.get(id);
+    return null;
   }
 
-  removeRecord(table: string, id: string): void {
-    this.data.get(table).delete(id);
+  async updateRecord(tableName: string, id: string, record: unknown) {
+    const table = this.data.get(tableName);
+    if (table.has(id)) {
+      table.set(id, record);
+      return record;
+    }
+    return null;
+  }
+
+  async removeRecord(tableName: string, id: string) {
+    const table = this.data.get(tableName);
+    if (table.has(id)) return table.delete(id);
+    return null;
   }
 }
+
+export const dataBase = new DB();
