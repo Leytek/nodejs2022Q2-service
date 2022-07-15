@@ -37,4 +37,12 @@ export class AlbumsService {
   remove(id: string): Promise<boolean> {
     return dataBase.removeRecord('album', id);
   }
+
+  async removeArtist(id: string) {
+    const albums = await (dataBase.getAll('album') as Promise<Album[] | null>);
+    albums.forEach((element) => {
+      if (element.id === id)
+        dataBase.updateRecord('album', id, { artistId: null });
+    });
+  }
 }

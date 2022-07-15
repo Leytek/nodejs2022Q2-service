@@ -21,7 +21,7 @@ class DB {
   async getAll(tableName: string) {
     return Array.from(this.data.get(tableName).entries(), ([key, value]) =>
       Object.assign({ key }, value),
-    ) as unknown;
+    ) as unknown[];
   }
 
   async getRecord(tableName: string, id: string) {
@@ -33,7 +33,10 @@ class DB {
   async updateRecord(tableName: string, id: string, record: unknown) {
     const table = this.data.get(tableName);
     if (table.has(id))
-      return Object.assign({ id }, table.set(id, record).get(id));
+      return Object.assign(
+        { id },
+        table.set(id, Object.assign(table.get(id), record)).get(id),
+      );
     return null;
   }
 
