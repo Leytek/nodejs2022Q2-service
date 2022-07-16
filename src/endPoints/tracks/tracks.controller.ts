@@ -16,7 +16,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { FavoritesService } from '../favorites/favorites.service';
 import { MESSAGES } from 'src/messages';
-import { UUID } from 'src/SETTINGS';
+import { UUID } from 'src/settings';
 
 @Controller('track')
 export class TracksController {

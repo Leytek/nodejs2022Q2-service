@@ -17,7 +17,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { FavoritesService } from '../favorites/favorites.service';
 import { TracksService } from '../tracks/tracks.service';
 import { MESSAGES } from 'src/messages';
-import { UUID } from 'src/SETTINGS';
+import { UUID } from 'src/settings';
 
 @Controller('album')
 export class AlbumsController {

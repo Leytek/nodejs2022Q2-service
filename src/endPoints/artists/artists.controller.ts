@@ -18,7 +18,7 @@ import { AlbumsService } from '../albums/albums.service';
 import { FavoritesService } from '../favorites/favorites.service';
 import { TracksService } from '../tracks/tracks.service';
 import { MESSAGES } from 'src/messages';
-import { UUID } from 'src/SETTINGS';
+import { UUID } from 'src/settings';
 
 @Controller('artist')
 export class ArtistsController {

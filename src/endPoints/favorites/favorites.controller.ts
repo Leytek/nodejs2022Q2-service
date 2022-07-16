@@ -12,7 +12,7 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { FavoritesService } from './favorites.service';
 import { MESSAGES } from 'src/messages';
-import { UUID } from 'src/SETTINGS';
+import { UUID } from 'src/settings';
 
 @Controller('favs')
 export class FavoritesController {
