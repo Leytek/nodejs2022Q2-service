@@ -11,38 +11,51 @@ class DB {
 
   async createRecord(tableName: string, id: string, record: unknown) {
     const table = this.data.get(tableName);
-    if (!table.has(id)) {
+
+    if (table && !table.has(id)) {
       table.set(id, record);
       return Object.assign({ id }, record);
     }
+
     return null;
   }
 
   async getAll(tableName: string) {
-    return Array.from(this.data.get(tableName).entries(), ([id, value]) =>
-      Object.assign({ id }, value),
-    ) as unknown[];
+    const table = this.data.get(tableName);
+
+    if (table)
+      return Array.from(table.entries(), ([id, value]) =>
+        Object.assign({ id }, value),
+      ) as unknown[];
+
+    return null;
   }
 
   async getRecord(tableName: string, id: string) {
     const table = this.data.get(tableName);
-    if (table.has(id)) return Object.assign({ id }, table.get(id));
+
+    if (table && table.has(id)) return Object.assign({ id }, table.get(id));
+
     return null;
   }
 
   async updateRecord(tableName: string, id: string, record: unknown) {
     const table = this.data.get(tableName);
-    if (table.has(id))
+
+    if (table && table.has(id))
       return Object.assign(
         { id },
         table.set(id, Object.assign(table.get(id), record)).get(id),
       );
+
     return null;
   }
 
   async removeRecord(tableName: string, id: string) {
     const table = this.data.get(tableName);
-    if (table.has(id)) return table.delete(id);
+
+    if (table && table.has(id)) return table.delete(id);
+
     return null;
   }
 }
