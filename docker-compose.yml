@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  rest-service-app:
+    container_name: rest-service-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - app-bridge
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - database
+    restart: unless-stopped
+
+  database:
+    container_name: database
+    build:
+      context: .
+      dockerfile: Dockerfile-DB
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PG_DATA: /var/lib/postgresql/data
+    networks:
+      - app-bridge
+    volumes:
+      - database:/var/lib/postgresql/data
+    restart: unless-stopped
+
+networks:
+  app-bridge:
+    name: app-bridge
+    driver: bridge
+
+volumes:
+  database:
+    driver: local
