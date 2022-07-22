@@ -1,48 +1,49 @@
-import { v4 } from 'uuid';
-import { dataBase } from 'src/DB/DB';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Album } from './entities/album.entity';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 
+@Injectable()
 export class AlbumsService {
-  constructor() {
-    dataBase.createTable('album');
-  }
+  constructor(
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
+  ) {}
 
   create(dto: CreateAlbumDto): Promise<Album | null> {
-    const record = {
-      name: dto.name,
-      year: dto.year,
-      artistId: dto.artistId || null,
-    };
-    return dataBase.createRecord(
-      'album',
-      v4(),
-      record,
-    ) as Promise<Album | null>;
+    const newAlbum = this.albumRepository.create(dto);
+    return this.albumRepository.save(newAlbum);
   }
 
   getAll(): Promise<Album[] | null> {
-    return dataBase.getAll('album') as Promise<Album[] | null>;
+    return this.albumRepository.find();
   }
 
   getOne(id: string): Promise<Album | null> {
-    return dataBase.getRecord('album', id) as Promise<Album | null>;
+    return this.albumRepository.findOneBy({ id });
   }
 
-  update(id: string, dto: UpdateAlbumDto): Promise<Album | null> {
-    return dataBase.updateRecord('album', id, dto) as Promise<Album | null>;
+  async update(id: string, dto: UpdateAlbumDto): Promise<Album | null> {
+    const album = await this.albumRepository.findOneBy({ id });
+
+    if (!album) return null;
+
+    await this.albumRepository.update(id, dto);
+    return this.albumRepository.findOneBy({ id });
   }
 
-  remove(id: string): Promise<boolean> {
-    return dataBase.removeRecord('album', id);
+  async remove(id: string): Promise<boolean> {
+    const result = await this.albumRepository.delete(id);
+    return result.affected !== 0;
   }
 
-  async removeArtist(id: string) {
+  /*async removeArtist(id: string) {
     const albums = await (dataBase.getAll('album') as Promise<Album[] | null>);
     for (const album of albums) {
       if (album.artistId === id)
         await dataBase.updateRecord('album', album.id, { artistId: null });
     }
-  }
+  }*/
 }
