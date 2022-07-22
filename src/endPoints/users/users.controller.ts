@@ -87,9 +87,9 @@ export class UsersController {
     )
     id: string,
   ) {
-    const user = await this.usersService.remove(id);
+    const result = await this.usersService.remove(id);
 
-    if (!user) throw new NotFoundException(MESSAGES.userNotFound);
+    if (!result) throw new NotFoundException(MESSAGES.userNotFound);
 
     return;
   }
