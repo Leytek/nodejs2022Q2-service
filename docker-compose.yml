@@ -9,6 +9,12 @@ services:
       target: development
     ports:
       - ${PORT}:${PORT}
+    environment:
+      - POSTGRES_HOST=${POSTGRES_DOCKER_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - app-bridge
     volumes:
@@ -18,17 +24,17 @@ services:
     restart: unless-stopped
 
   database:
-    container_name: database
+    container_name: database-docker
     build:
       context: .
       dockerfile: Dockerfile-DB
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PG_DATA: /var/lib/postgresql/data
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PG_DATA=/var/lib/postgresql/data
     networks:
       - app-bridge
     volumes:

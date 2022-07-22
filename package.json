@@ -19,7 +19,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "docker:scan": "docker scan nestjs-rest-service_database && docker scan nestjs-rest-service_rest-service-app"
+    "docker:scan": "docker scan nestjs-rest-service_database && docker scan nestjs-rest-service_rest-service-app",
+    "migration:create": "typeorm-ts-node-esm -d ./src/ormconfig.ts migration:create src/migration/first",
+    "migration:generate": "typeorm-ts-node-esm -d ./src/ormconfig.ts migration:generate src/migration/first",
+    "migration:run": "typeorm-ts-node-esm -d ./src/ormconfig.ts migration:run"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -29,15 +32,18 @@
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.1",
+    "@nestjs/typeorm": "^9.0.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dotenv": "^16.0.1",
     "http-status-codes": "^2.2.0",
+    "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.5.0",
+    "typeorm": "^0.3.7",
     "uuid": "^8.3.2",
     "yaml": "^2.1.1"
   },

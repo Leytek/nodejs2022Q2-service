@@ -6,7 +6,6 @@ COPY package*.json ./
 RUN npm i
 
 COPY . .
-COPY ./.env.example ./.env
 
 RUN npm run build
 CMD ["npm", "run", "start:dev"]
@@ -21,7 +20,6 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY . .
-COPY ./.env.example ./.env
 
 COPY --from=development /app/dist ./dist
 CMD ["npm", "run", "start:prod"]
