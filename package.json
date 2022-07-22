@@ -21,7 +21,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker:scan": "docker scan nestjs-rest-service_database && docker scan nestjs-rest-service_rest-service-app",
     "migration:create": "typeorm-ts-node-esm migration:create src/migration/first",
-    "migration:generate": "typeorm-ts-node-esm -d ./src/ormconfig.ts migration:generate src/migration/first",
+    "migration:generate": "npm run build && typeorm-ts-node-esm -d ./src/ormconfig.ts migration:generate src/migration/first",
     "migration:run": "typeorm-ts-node-esm -d ./src/ormconfig.ts migration:run"
   },
   "dependencies": {
