@@ -36,7 +36,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    const album = await this.favoritesService.add('album', id);
+    const album = await this.favoritesService.add('albums', id);
 
     if (!album) {
       throw new UnprocessableEntityException(MESSAGES.albumNotFound);
@@ -56,7 +56,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    const album = await this.favoritesService.remove('album', id);
+    const album = await this.favoritesService.remove('albums', id);
 
     if (!album) {
       throw new NotFoundException(MESSAGES.albumNotFound);
@@ -77,7 +77,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    const artist = await this.favoritesService.add('artist', id);
+    const artist = await this.favoritesService.add('artists', id);
 
     if (!artist) {
       throw new UnprocessableEntityException(MESSAGES.artistNotFound);
@@ -97,7 +97,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    const artist = await this.favoritesService.remove('artist', id);
+    const artist = await this.favoritesService.remove('artists', id);
 
     if (!artist) {
       throw new NotFoundException(MESSAGES.artistNotFound);
@@ -118,7 +118,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    const track = await this.favoritesService.add('track', id);
+    const track = await this.favoritesService.add('tracks', id);
 
     if (!track) {
       throw new UnprocessableEntityException(MESSAGES.trackNotFound);
@@ -138,7 +138,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    const track = await this.favoritesService.remove('track', id);
+    const track = await this.favoritesService.remove('tracks', id);
 
     if (!track) {
       throw new NotFoundException(MESSAGES.trackNotFound);

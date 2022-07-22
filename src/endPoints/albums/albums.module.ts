@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Album } from './entities/album.entity';
 import { AlbumsController } from './albums.controller';
 import { AlbumsService } from './albums.service';
-import { FavoritesService } from '../favorites/favorites.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Album])],
-  providers: [AlbumsService, FavoritesService],
+  providers: [AlbumsService],
   controllers: [AlbumsController],
+  exports: [AlbumsService],
 })
 export class AlbumsModule {}

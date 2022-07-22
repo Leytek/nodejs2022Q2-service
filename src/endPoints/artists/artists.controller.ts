@@ -14,16 +14,12 @@ import { StatusCodes } from 'http-status-codes';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { FavoritesService } from '../favorites/favorites.service';
 import { MESSAGES } from 'src/messages';
 import { UUID } from 'src/settings';
 
 @Controller('artist')
 export class ArtistsController {
-  constructor(
-    private readonly artistsService: ArtistsService,
-    private readonly favoritesService: FavoritesService,
-  ) {}
+  constructor(private readonly artistsService: ArtistsService) {}
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
@@ -92,7 +88,6 @@ export class ArtistsController {
     id: string,
   ) {
     const artist = await this.artistsService.remove(id);
-    await this.favoritesService.remove('artist', id);
 
     if (!artist) {
       throw new NotFoundException(MESSAGES.artistNotFound);

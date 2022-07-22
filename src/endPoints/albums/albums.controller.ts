@@ -14,16 +14,12 @@ import { StatusCodes } from 'http-status-codes';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { FavoritesService } from '../favorites/favorites.service';
 import { MESSAGES } from 'src/messages';
 import { UUID } from 'src/settings';
 
 @Controller('album')
 export class AlbumsController {
-  constructor(
-    private readonly albumsService: AlbumsService,
-    private readonly favoritesService: FavoritesService,
-  ) {}
+  constructor(private readonly albumsService: AlbumsService) {}
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
@@ -92,7 +88,6 @@ export class AlbumsController {
     id: string,
   ) {
     const album = await this.albumsService.remove(id);
-    await this.favoritesService.remove('album', id);
 
     if (!album) {
       throw new NotFoundException(MESSAGES.albumNotFound);

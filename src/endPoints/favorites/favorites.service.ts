@@ -1,84 +1,64 @@
-import { dataBase } from 'src/DB/DB';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Favorite } from './entities/favorite.entity';
+import { AlbumsService } from '../albums/albums.service';
+import { ArtistsService } from '../artists/artists.service';
+import { TracksService } from '../tracks/tracks.service';
 
+@Injectable()
 export class FavoritesService {
-  constructor() {
-    dataBase.createTable('albumFav');
-    dataBase.createRecord('albumFav', '0', { set: new Set() });
-    dataBase.createTable('artistFav');
-    dataBase.createRecord('artistFav', '0', { set: new Set() });
-    dataBase.createTable('trackFav');
-    dataBase.createRecord('trackFav', '0', { set: new Set() });
-  }
+  constructor(
+    @InjectRepository(Favorite)
+    private readonly favoriteRepository: Repository<Favorite>,
+    private readonly albumsService: AlbumsService,
+    private readonly artistsService: ArtistsService,
+    private readonly tracksService: TracksService,
+  ) {}
 
   async getAll(): Promise<Favorite> {
-    const recordAlbums = (await dataBase.getRecord('albumFav', '0')) as {
-      id: string;
-      set: Set<string>;
-    };
-    const recordArtists = (await dataBase.getRecord('artistFav', '0')) as {
-      id: string;
-      set: Set<string>;
-    };
-    const recordTracks = (await dataBase.getRecord('trackFav', '0')) as {
-      id: string;
-      set: Set<string>;
-    };
-    const favoriteAlbums = Array.from(recordAlbums.set);
-    const favoriteArtists = Array.from(recordArtists.set);
-    const favoriteTracks = Array.from(recordTracks.set);
+    const favorites = await this.favoriteRepository.find({
+      relations: {
+        artists: true,
+        albums: true,
+        tracks: true,
+      },
+    });
 
-    const albums = (
-      await Promise.allSettled(
-        favoriteAlbums.map((id: string) => dataBase.getRecord('album', id)),
-      )
-    ).reduce((acc, item: PromiseSettledResult<any>) => {
-      item.status === 'fulfilled' && item.value && acc.push(item.value);
-      return acc;
-    }, []);
+    if (favorites.length) return favorites[0];
 
-    const artists = (
-      await Promise.allSettled(
-        favoriteArtists.map((id: string) => dataBase.getRecord('artist', id)),
-      )
-    ).reduce((acc, item: PromiseSettledResult<any>) => {
-      item.status === 'fulfilled' && item.value && acc.push(item.value);
-      return acc;
-    }, []);
-
-    const tracks = (
-      await Promise.allSettled(
-        favoriteTracks.map((id: string) => dataBase.getRecord('track', id)),
-      )
-    ).reduce((acc, item: PromiseSettledResult<any>) => {
-      item.status === 'fulfilled' && item.value && acc.push(item.value);
-      return acc;
-    }, []);
-
-    return {
-      albums,
-      artists,
-      tracks,
-    };
+    return this.favoriteRepository.save({
+      albums: [],
+      artists: [],
+      tracks: [],
+    });
   }
 
   async add(type: string, id: string) {
-    const fav = dataBase.getRecord(type, id);
-    if (!fav) return null;
+    const favorites = await this.getAll();
+    const typeFav = favorites[type];
+    const instance = await this[type + 'Service'].getOne(id);
 
-    const record = (await dataBase.getRecord(type + 'Fav', '0')) as {
-      id: string;
-      set: Set<string>;
-    };
-    record.set.add(id);
-    return fav;
+    if (!instance) return null;
+
+    const hasInstance = typeFav.some((c) => c.id === id);
+
+    if (!hasInstance) {
+      typeFav.push(instance);
+      await this.favoriteRepository.save(favorites);
+    }
+    return instance;
   }
 
   async remove(type: string, id: string) {
-    const record = (await dataBase.getRecord(type + 'Fav', '0')) as {
-      id: string;
-      set: Set<string>;
-    };
-    return record.set.delete(id);
+    const favorites = await this.getAll();
+    const length = favorites[type].length;
+
+    favorites[type] = favorites[type].filter((c) => c.id !== id);
+
+    if (favorites[type].length === length) return false;
+
+    await this.favoriteRepository.save(favorites);
+    return true;
   }
 }

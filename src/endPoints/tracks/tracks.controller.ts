@@ -14,16 +14,12 @@ import { StatusCodes } from 'http-status-codes';
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { FavoritesService } from '../favorites/favorites.service';
 import { MESSAGES } from 'src/messages';
 import { UUID } from 'src/settings';
 
 @Controller('track')
 export class TracksController {
-  constructor(
-    private readonly tracksService: TracksService,
-    private readonly favoritesService: FavoritesService,
-  ) {}
+  constructor(private readonly tracksService: TracksService) {}
 
   @Post()
   @HttpCode(StatusCodes.CREATED)
@@ -92,7 +88,6 @@ export class TracksController {
     id: string,
   ) {
     const track = await this.tracksService.remove(id);
-    this.favoritesService.remove('track', id);
 
     if (!track) {
       throw new NotFoundException(MESSAGES.trackNotFound);
