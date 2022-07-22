@@ -1,8 +1,6 @@
-import { v4 } from 'uuid';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { dataBase } from '../../DB/DB';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -16,7 +14,6 @@ export class UsersService {
 
   create(dto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(dto);
-    console.log(typeof newUser.createdAt);
     return this.userRepository.save(newUser);
   }
 
