@@ -36,6 +36,7 @@ export class Album {
   artistId: string | null;
 
   @ManyToOne(() => Artist, (artist) => artist.id, {
+    nullable: true,
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
   })

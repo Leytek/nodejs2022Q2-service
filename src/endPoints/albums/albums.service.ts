@@ -38,12 +38,4 @@ export class AlbumsService {
     const result = await this.albumRepository.delete(id);
     return result.affected !== 0;
   }
-
-  /*async removeArtist(id: string) {
-    const albums = await (dataBase.getAll('album') as Promise<Album[] | null>);
-    for (const album of albums) {
-      if (album.artistId === id)
-        await dataBase.updateRecord('album', album.id, { artistId: null });
-    }
-  }*/
 }

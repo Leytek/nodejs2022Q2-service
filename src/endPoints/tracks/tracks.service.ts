@@ -1,57 +1,41 @@
-import { v4 } from 'uuid';
-import { dataBase } from 'src/DB/DB';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Track } from './entities/track.entity';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { CreateTrackDto } from './dto/create-track.dto';
 
+@Injectable()
 export class TracksService {
-  constructor() {
-    dataBase.createTable('track');
-  }
+  constructor(
+    @InjectRepository(Track)
+    private readonly trackRepository: Repository<Track>,
+  ) {}
 
   create(dto: CreateTrackDto): Promise<Track | null> {
-    const record = {
-      name: dto.name,
-      duration: dto.duration,
-      artistId: dto.artistId || null,
-      albumId: dto.albumId || null,
-    };
-    return dataBase.createRecord(
-      'track',
-      v4(),
-      record,
-    ) as Promise<Track | null>;
+    const newTrack = this.trackRepository.create(dto);
+    return this.trackRepository.save(newTrack);
   }
 
   getAll(): Promise<Track[] | null> {
-    return dataBase.getAll('track') as Promise<Track[] | null>;
+    return this.trackRepository.find();
   }
 
   getOne(id: string): Promise<Track | null> {
-    return dataBase.getRecord('track', id) as Promise<Track | null>;
+    return this.trackRepository.findOneBy({ id });
   }
 
-  update(id: string, dto: UpdateTrackDto): Promise<Track | null> {
-    return dataBase.updateRecord('track', id, dto) as Promise<Track | null>;
+  async update(id: string, dto: UpdateTrackDto): Promise<Track | null> {
+    const track = await this.trackRepository.findOneBy({ id });
+
+    if (!track) return null;
+
+    await this.trackRepository.update(id, dto);
+    return this.trackRepository.findOneBy({ id });
   }
 
-  remove(id: string): Promise<boolean> {
-    return dataBase.removeRecord('track', id);
-  }
-
-  async removeAlbum(id: string) {
-    const tracks = await (dataBase.getAll('track') as Promise<Track[] | null>);
-    for (const track of tracks) {
-      if (track.albumId === id)
-        await dataBase.updateRecord('track', track.id, { albumId: null });
-    }
-  }
-
-  async removeArtist(id: string) {
-    const tracks = await (dataBase.getAll('track') as Promise<Track[] | null>);
-    for (const track of tracks) {
-      if (track.artistId === id)
-        await dataBase.updateRecord('track', track.id, { artistId: null });
-    }
+  async remove(id: string): Promise<boolean> {
+    const result = await this.trackRepository.delete(id);
+    return result.affected !== 0;
   }
 }

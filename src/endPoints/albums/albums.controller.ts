@@ -15,7 +15,6 @@ import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { FavoritesService } from '../favorites/favorites.service';
-import { TracksService } from '../tracks/tracks.service';
 import { MESSAGES } from 'src/messages';
 import { UUID } from 'src/settings';
 
@@ -24,7 +23,6 @@ export class AlbumsController {
   constructor(
     private readonly albumsService: AlbumsService,
     private readonly favoritesService: FavoritesService,
-    private readonly tracksService: TracksService,
   ) {}
 
   @Post()
@@ -95,7 +93,6 @@ export class AlbumsController {
   ) {
     const album = await this.albumsService.remove(id);
     await this.favoritesService.remove('album', id);
-    await this.tracksService.removeAlbum(id);
 
     if (!album) {
       throw new NotFoundException(MESSAGES.albumNotFound);

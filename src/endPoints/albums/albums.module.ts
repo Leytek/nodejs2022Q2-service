@@ -4,11 +4,10 @@ import { Album } from './entities/album.entity';
 import { AlbumsController } from './albums.controller';
 import { AlbumsService } from './albums.service';
 import { FavoritesService } from '../favorites/favorites.service';
-import { TracksService } from '../tracks/tracks.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Album])],
-  providers: [AlbumsService, FavoritesService, TracksService],
+  providers: [AlbumsService, FavoritesService],
   controllers: [AlbumsController],
 })
 export class AlbumsModule {}
