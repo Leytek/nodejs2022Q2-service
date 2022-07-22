@@ -1,39 +1,41 @@
-import { v4 } from 'uuid';
-import { dataBase } from 'src/DB/DB';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Artist } from './entities/artist.entity';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 
+@Injectable()
 export class ArtistsService {
-  constructor() {
-    dataBase.createTable('artist');
-  }
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+  ) {}
 
   create(dto: CreateArtistDto): Promise<Artist | null> {
-    const record = {
-      name: dto.name,
-      grammy: dto.grammy,
-    };
-    return dataBase.createRecord(
-      'artist',
-      v4(),
-      record,
-    ) as Promise<Artist | null>;
+    const newArtist = this.artistRepository.create(dto);
+    return this.artistRepository.save(newArtist);
   }
 
   getAll(): Promise<Artist[] | null> {
-    return dataBase.getAll('artist') as Promise<Artist[] | null>;
+    return this.artistRepository.find();
   }
 
   getOne(id: string): Promise<Artist | null> {
-    return dataBase.getRecord('artist', id) as Promise<Artist | null>;
+    return this.artistRepository.findOneBy({ id });
   }
 
-  update(id: string, dto: UpdateArtistDto): Promise<Artist | null> {
-    return dataBase.updateRecord('artist', id, dto) as Promise<Artist | null>;
+  async update(id: string, dto: UpdateArtistDto): Promise<Artist | null> {
+    const artist = await this.artistRepository.findOneBy({ id });
+
+    if (!artist) return null;
+
+    await this.artistRepository.update(id, dto);
+    return this.artistRepository.findOneBy({ id });
   }
 
-  remove(id: string): Promise<boolean> {
-    return dataBase.removeRecord('artist', id);
+  async remove(id: string): Promise<boolean> {
+    const result = await this.artistRepository.delete(id);
+    return result.affected !== 0;
   }
 }
