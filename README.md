@@ -49,6 +49,19 @@ docker-compose down
 npm run docker:scan
 ```
 
+## Typeorm migrations
+
+- Create clear migration file
+```
+npm run migration:create
+```
+
+- Generate migration file
+```
+npm run migration:generate
+```
+
+
 
 ## Testing
 
