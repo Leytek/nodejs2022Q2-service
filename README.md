@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/Leytek/nestjs-rest-service
 ```
 
 ## Installing NPM modules
